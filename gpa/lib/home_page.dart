@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gpa/create_color.dart';
 
 import 'lesson.dart';
 
@@ -18,6 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<lesson> allLesson;
   double _average = 0;
   static int count = 0;
+  CreateColor _createColor = CreateColor();
 
   var formKey = GlobalKey<FormState>();
 
@@ -98,9 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       courseName = kaydedilecekDeger;
                       setState(() {
                         allLesson.add(lesson(courseName, lessonLetterValue, courseCredit,
-                            rastgeleRenkOlustur()));
+                            _createColor.randomCreateColor()));
                         _average = 0;
-                        _ortalamayiHesapla();
+                        _calculateAverage();
                       });
                     },
                   ),
@@ -117,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             BorderRadius.all(Radius.circular(10))),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<int>(
-                            items: _dersKrediItems(),
+                            items: _courseCredit(),
                             value: courseCredit,
                             onChanged: (secilenKredi) {
                               setState(() {
@@ -137,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             BorderRadius.all(Radius.circular(10))),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<double>(
-                            items: _dersHarfDegerleriItems(),
+                            items: _lessonLetterValuesItems(),
                             value: lessonLetterValue,
                             onChanged: (secilenHarf) {
                               setState(() {
@@ -195,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: Container(
               child: ListView.builder(
-                itemBuilder: _listeElemanlariniOlustur,
+                itemBuilder: _createListItems,
                 itemCount: allLesson.length,
               ),
             ),
@@ -257,9 +259,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             courseName = kaydedilecekDeger;
                             setState(() {
                               allLesson.add(lesson(courseName, lessonLetterValue,
-                                  courseCredit, rastgeleRenkOlustur()));
+                                  courseCredit, _createColor.randomCreateColor()));
                               _average = 0;
-                              _ortalamayiHesapla();
+                              _calculateAverage();
                             });
                           },
                         ),
@@ -277,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   BorderRadius.all(Radius.circular(10))),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<int>(
-                                  items: _dersKrediItems(),
+                                  items: _courseCredit(),
                                   value: courseCredit,
                                   onChanged: (secilenKredi) {
                                     setState(() {
@@ -298,7 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   BorderRadius.all(Radius.circular(10))),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<double>(
-                                  items: _dersHarfDegerleriItems(),
+                                  items: _lessonLetterValuesItems(),
                                   value: lessonLetterValue,
                                   onChanged: (secilenHarf) {
                                     setState(() {
@@ -359,7 +361,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
               child: Container(
                 child: ListView.builder(
-                  itemBuilder: _listeElemanlariniOlustur,
+                  itemBuilder: _createListItems,
                   itemCount: allLesson.length,
                 ),
               ),
@@ -369,7 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  List<DropdownMenuItem<int>> _dersKrediItems() {
+  List<DropdownMenuItem<int>> _courseCredit() {
     List<DropdownMenuItem<int>> krediler = [];
 
     for (int i = 1; i <= 10; i++) {
@@ -386,7 +388,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return krediler;
   }
 
-  List<DropdownMenuItem<double>> _dersHarfDegerleriItems() {
+  List<DropdownMenuItem<double>> _lessonLetterValuesItems() {
     List<DropdownMenuItem<double>> harfler = [];
     harfler.add(DropdownMenuItem(
       child: Text(
@@ -454,7 +456,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return harfler;
   }
 
-  Widget _listeElemanlariniOlustur(BuildContext context, int index) {
+  Widget _createListItems(BuildContext context, int index) {
     count++;
 
     return Dismissible(
@@ -463,7 +465,7 @@ class _MyHomePageState extends State<MyHomePage> {
       onDismissed: (direction) {
         setState(() {
           allLesson.removeAt(index);
-          _ortalamayiHesapla();
+          _calculateAverage();
         });
       },
       child: Container(
@@ -491,7 +493,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _ortalamayiHesapla() {
+  void _calculateAverage() {
     double toplamNot = 0;
     double toplamKredi = 0;
 
@@ -504,9 +506,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _average = toplamNot / toplamKredi;
   }
 
-  Color rastgeleRenkOlustur() {
-    return Color.fromARGB(150 + Random().nextInt(105), Random().nextInt(255),
-        Random().nextInt(255), Random().nextInt(255));
-  }
+
 }
 
